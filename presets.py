@@ -538,8 +538,10 @@ class Humanoid_ClippedPPO(Preset):
         self.env.level = 'Humanoid-v1'
         self.learning_rate = 0.0001
         self.num_heatup_steps = 0
-        self.agent.num_consecutive_training_steps = 1
-        self.agent.num_consecutive_playing_steps = 2048
+        self.agent.num_consecutive_training_steps = 0
+        self.agent.num_consecutive_playing_steps = 200
+        self.evaluate_every_x_episodes = 1
+        self.evaluation_episodes = 10000
         self.agent.discount = 0.99
         self.batch_size = 64
         self.agent.policy_gradient_rescaler = 'GAE'
