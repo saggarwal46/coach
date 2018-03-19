@@ -442,7 +442,7 @@ class ClippedPPO(AgentParameters):
     batch_size = 64
     use_separate_networks_per_head = True
     step_until_collecting_full_episodes = True
-    beta_entropy = 0.01
+    beta_entropy = 0.001
 
 class DFP(AgentParameters):
     type = 'DFPAgent'
