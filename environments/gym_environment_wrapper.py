@@ -45,11 +45,13 @@ from environments.environment_wrapper import EnvironmentWrapper
 
 
 class GymEnvironmentWrapper(EnvironmentWrapper):
-    def __init__(self, tuning_parameters):
+    def __init__(self, tuning_parameters, env=None):
         EnvironmentWrapper.__init__(self, tuning_parameters)
 
         # env parameters
-        if ':' in self.env_id:
+        if env is not None:
+            self.env = env
+        elif ':' in self.env_id:
             self.env = gym.envs.registration.load(self.env_id)()
         else:
             self.env = gym.make(self.env_id)

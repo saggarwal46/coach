@@ -22,8 +22,8 @@ import scipy.signal
 
 # Actor Critic - https://arxiv.org/abs/1602.01783
 class ActorCriticAgent(PolicyOptimizationAgent):
-    def __init__(self, env, tuning_parameters, replicated_device=None, thread_id=0, create_target_network = False):
-        PolicyOptimizationAgent.__init__(self, env, tuning_parameters, replicated_device, thread_id, create_target_network)
+    def __init__(self, env, tuning_parameters, replicated_device=None, thread_id=0, create_target_network = False, name='main'):
+        PolicyOptimizationAgent.__init__(self, env, tuning_parameters, replicated_device, thread_id, create_target_network, name=name)
         self.last_gradient_update_step_idx = 0
         self.action_advantages = Signal('Advantages')
         self.state_values = Signal('Values')

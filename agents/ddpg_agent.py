@@ -20,9 +20,9 @@ from configurations import *
 
 # Deep Deterministic Policy Gradients Network - https://arxiv.org/pdf/1509.02971.pdf
 class DDPGAgent(ActorCriticAgent):
-    def __init__(self, env, tuning_parameters, replicated_device=None, thread_id=0):
+    def __init__(self, env, tuning_parameters, replicated_device=None, thread_id=0, name='main'):
         ActorCriticAgent.__init__(self, env, tuning_parameters, replicated_device, thread_id,
-                                  create_target_network=True)
+                                  create_target_network=True, name=name)
         # define critic network
         self.critic_network = self.main_network
         # self.networks.append(self.critic_network)
@@ -30,7 +30,7 @@ class DDPGAgent(ActorCriticAgent):
         # define actor network
         tuning_parameters.agent.input_types = {'observation': InputTypes.Observation}
         tuning_parameters.agent.output_types = [OutputTypes.Pi]
-        self.actor_network = NetworkWrapper(tuning_parameters, True, self.has_global, 'actor',
+        self.actor_network = NetworkWrapper(tuning_parameters, True, self.has_global, name + '/actor',
                                             self.replicated_device, self.worker_device)
         self.networks.append(self.actor_network)
 

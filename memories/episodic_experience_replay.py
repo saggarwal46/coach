@@ -74,10 +74,13 @@ class EpisodicExperienceReplay(Memory):
         return self.buffer[start_episode_idx:(start_episode_idx + n)]
 
     def sample(self, size):
-        assert self.num_transitions_in_complete_episodes() > size, \
-            'There are not enough transitions in the replay buffer. ' \
-            'Available transitions: {}. Requested transitions: {}.'\
-                .format(self.num_transitions_in_complete_episodes(), size)
+        # Note that we sample with replacement. This allows us to 
+        # seemlessly degrade performance when the memory size is less
+        # than the requested batch size.
+        # assert self.num_transitions_in_complete_episodes() > size, \
+        #     'There are not enough transitions in the replay buffer. ' \
+        #     'Available transitions: {}. Requested transitions: {}.'\
+        #         .format(self.num_transitions_in_complete_episodes(), size)
         batch = []
         transitions_idx = np.random.randint(self.num_transitions_in_complete_episodes(), size=size)
         for i in transitions_idx:

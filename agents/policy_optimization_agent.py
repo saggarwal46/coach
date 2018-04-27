@@ -31,9 +31,9 @@ class PolicyGradientRescaler(Enum):
 
 
 class PolicyOptimizationAgent(Agent):
-    def __init__(self, env, tuning_parameters, replicated_device=None, thread_id=0, create_target_network=False):
+    def __init__(self, env, tuning_parameters, replicated_device=None, thread_id=0, create_target_network=False, name='main'):
         Agent.__init__(self, env, tuning_parameters, replicated_device, thread_id)
-        self.main_network = NetworkWrapper(tuning_parameters, create_target_network, self.has_global, 'main',
+        self.main_network = NetworkWrapper(tuning_parameters, create_target_network, self.has_global, name,
                                            self.replicated_device, self.worker_device)
         self.networks.append(self.main_network)
 

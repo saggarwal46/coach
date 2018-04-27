@@ -19,8 +19,8 @@ from agents.value_optimization_agent import *
 
 # Deep Q Network - https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf
 class DQNAgent(ValueOptimizationAgent):
-    def __init__(self, env, tuning_parameters, replicated_device=None, thread_id=0):
-        ValueOptimizationAgent.__init__(self, env, tuning_parameters, replicated_device, thread_id)
+    def __init__(self, env, tuning_parameters, replicated_device=None, thread_id=0, name='main'):
+        ValueOptimizationAgent.__init__(self, env, tuning_parameters, replicated_device, thread_id, name=name)
 
     def learn_from_batch(self, batch):
         current_states, next_states, actions, rewards, game_overs, _ = self.extract_batch(batch)

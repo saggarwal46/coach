@@ -80,7 +80,9 @@ class Agent(object):
 
         self.has_global = replicated_device is not None
         self.replicated_device = replicated_device
-        self.worker_device = "/job:worker/task:{}/cpu:0".format(task_id) if replicated_device is not None else "/gpu:0"
+        # TODO: don't hard code this
+        self.worker_device = None
+        # self.worker_device = "/job:worker/task:{}/cpu:0".format(task_id) if replicated_device is not None else "/gpu:0"
 
         self.exploration_policy = eval(tuning_parameters.exploration.policy + '(tuning_parameters)')
         self.evaluation_exploration_policy = eval(tuning_parameters.exploration.evaluation_policy
