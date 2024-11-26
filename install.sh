@@ -108,19 +108,20 @@ fi
 IN_VIRTUAL_ENV=`python3 -c 'import sys; print("%i" % hasattr(sys, "real_prefix"))'`
 
 # basic installations
-sudo -E apt-get install python3-pip cmake zlib1g-dev python3-tk python-opencv -y
+sudo -E apt-get install python3-pip cmake zlib1g-dev python3-tk -y
 pip3 install --upgrade pip
+# pip3 install opencv-python
 
 # if we are not in a virtual environment, we will create one with the appropriate python version and then activate it
 # if we are already in a virtual environment,
 
-if [ ${INSTALL_VIRTUAL_ENVIRONMENT} -eq 1 ]; then
-    if [ ${IN_VIRTUAL_ENV} -eq 0 ]; then
-        sudo -E pip3 install virtualenv
-        virtualenv -p python3 coach_env
-        . coach_env/bin/activate
-    fi
-fi
+# if [ ${INSTALL_VIRTUAL_ENVIRONMENT} -eq 1 ]; then
+#     if [ ${IN_VIRTUAL_ENV} -eq 0 ]; then
+#         sudo -E pip3 install virtualenv
+#         virtualenv -p python3 coach_env
+#         . coach_env/bin/activate
+#     fi
+# fi
 
 #------------------------------------------------
 # From now on we are in a virtual environment

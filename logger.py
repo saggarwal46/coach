@@ -166,6 +166,9 @@ class Logger(BaseLogger):
         self.experiments_path = ""
         self.last_line_idx_written_to_csv = 0
         self.experiment_name = ""
+        
+    def set_csv_path(self, pth):
+        self.csv_path = pth
 
     def set_current_time(self, time):
         self.time = time
