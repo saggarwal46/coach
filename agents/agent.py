@@ -32,7 +32,7 @@ from architectures import *
 from exploration_policies import *
 from memories import *
 from memories.memory import *
-from logger import logger, screen
+from logger import Logger, ScreenLogger
 import random
 import time
 import os
@@ -42,7 +42,13 @@ from six.moves import range
 
 
 class Agent(object):
-    def __init__(self, env, tuning_parameters, replicated_device=None, task_id=0):
+    def __init__(
+        self,
+        env,
+        tuning_parameters,
+        replicated_device=None,
+        task_id=0,
+        ):
         """
         :param env: An environment instance
         :type env: EnvironmentWrapper
@@ -102,7 +108,8 @@ class Agent(object):
         self.episode_running_info = {}
         self.last_episode_evaluation_ran = 0
         self.running_observations = []
-        logger.set_current_time(self.current_episode)
+        self.logger = Logger()
+        self.logger.set_current_time(self.current_episode)
         self.main_network = None
         self.networks = []
         self.last_episode_images = []
@@ -162,31 +169,31 @@ class Agent(object):
         :return: None
         """
         # log all the signals to file
-        logger.set_current_time(self.current_episode)
-        logger.create_signal_value('Training Iter', self.training_iteration)
-        logger.create_signal_value('In Heatup', int(phase == RunPhase.HEATUP))
-        logger.create_signal_value('ER #Transitions', self.memory.num_transitions())
-        logger.create_signal_value('ER #Episodes', self.memory.length())
-        logger.create_signal_value('Episode Length', self.current_episode_steps_counter)
-        logger.create_signal_value('Total steps', self.total_steps_counter)
-        logger.create_signal_value("Epsilon", self.exploration_policy.get_control_param())
-        logger.create_signal_value("Training Reward", self.total_reward_in_current_episode
+        self.logger.set_current_time(self.current_episode)
+        self.logger.create_signal_value('Training Iter', self.training_iteration)
+        self.logger.create_signal_value('In Heatup', int(phase == RunPhase.HEATUP))
+        self.logger.create_signal_value('ER #Transitions', self.memory.num_transitions())
+        self.logger.create_signal_value('ER #Episodes', self.memory.length())
+        self.logger.create_signal_value('Episode Length', self.current_episode_steps_counter)
+        self.logger.create_signal_value('Total steps', self.total_steps_counter)
+        self.logger.create_signal_value("Epsilon", self.exploration_policy.get_control_param())
+        self.logger.create_signal_value("Training Reward", self.total_reward_in_current_episode
                                    if phase == RunPhase.TRAIN else np.nan)
-        logger.create_signal_value('Evaluation Reward', self.total_reward_in_current_episode
+        self.logger.create_signal_value('Evaluation Reward', self.total_reward_in_current_episode
                                    if phase == RunPhase.TEST else np.nan)
-        logger.create_signal_value('Update Target Network', 0, overwrite=False)
-        logger.update_wall_clock_time(self.current_episode)
+        self.logger.create_signal_value('Update Target Network', 0, overwrite=False)
+        self.logger.update_wall_clock_time(self.current_episode)
 
         for signal in self.signals:
-            logger.create_signal_value("{}/Mean".format(signal.name), signal.get_mean())
-            logger.create_signal_value("{}/Stdev".format(signal.name), signal.get_stdev())
-            logger.create_signal_value("{}/Max".format(signal.name), signal.get_max())
-            logger.create_signal_value("{}/Min".format(signal.name), signal.get_min())
+            self.logger.create_signal_value("{}/Mean".format(signal.name), signal.get_mean())
+            self.logger.create_signal_value("{}/Stdev".format(signal.name), signal.get_stdev())
+            self.logger.create_signal_value("{}/Max".format(signal.name), signal.get_max())
+            self.logger.create_signal_value("{}/Min".format(signal.name), signal.get_min())
 
         # dump
         if self.current_episode % self.tp.visualization.dump_signals_to_csv_every_x_episodes == 0 \
                 and self.current_episode > 0:
-            logger.dump_output_csv()
+            self.logger.dump_output_csv()
 
     def reset_game(self, do_not_reset_env=False):
         """
@@ -283,9 +290,9 @@ class Agent(object):
         if self.total_steps_counter % self.tp.agent.num_steps_between_copying_online_weights_to_target == 0:
             for network in self.networks:
                 network.update_target_network(self.tp.agent.rate_for_copying_weights_to_target)
-            logger.create_signal_value('Update Target Network', 1)
+            self.logger.create_signal_value('Update Target Network', 1)
         else:
-            logger.create_signal_value('Update Target Network', 0, overwrite=False)
+            self.logger.create_signal_value('Update Target Network', 0, overwrite=False)
 
         return loss
 
@@ -485,7 +492,7 @@ class Agent(object):
                 max_reward_achieved = self.total_reward_in_current_episode
                 frame_skipping = int(5/self.tp.env.frame_skip)
                 if self.tp.visualization.dump_gifs:
-                    logger.create_gif(self.last_episode_images[::frame_skipping],
+                    self.logger.create_gif(self.last_episode_images[::frame_skipping],
                                       name='score-{}'.format(max_reward_achieved), fps=10)
 
             average_evaluation_reward += self.total_reward_in_current_episode
