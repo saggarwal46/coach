@@ -142,6 +142,10 @@ class Agent(object):
         if self.tp.seed is not None:
             random.seed(self.tp.seed)
             np.random.seed(self.tp.seed)
+        
+        if hasattr(self.env, "env") and hasattr(self.env.env, "training_iter_callback"):
+            print("HAS ATTRIBUTE BRO")
+            self.training_iter_cllbk  = self.env.env.training_iter_callback
 
     def log_to_screen(self, phase):
         # log to screen
@@ -571,6 +575,8 @@ class Agent(object):
                     loss = self.train()
                     self.loss.add_sample(loss)
                     self.training_iteration += 1
+                    if self.training_iter_cllbk:
+                        self.training_iter_cllbk(self.training_iteration)
                     if self.imitation:
                         self.log_to_screen(RunPhase.TRAIN)
                 self.post_training_commands()
